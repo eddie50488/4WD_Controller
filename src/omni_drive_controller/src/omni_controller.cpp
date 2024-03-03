@@ -1,3 +1,25 @@
+// MIT License
+
+// Copyright (c) 2022 Mateus Menezes
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #include "omni_drive_controller/omni_controller.hpp"
 
 #include <chrono> // NOLINT
@@ -28,8 +50,6 @@ namespace omni_drive_controller
   using lifecycle_msgs::msg::State;
   using std::placeholders::_1;
 
-  // initializes the cmd_vel_ member variable with a shared pointer to
-  // a new instance of geometry_msgs::msg::TwistStamped.
   OmniDriveController::OmniDriveController()
       : controller_interface::ControllerInterface(), cmd_vel_(std::make_shared<geometry_msgs::msg::TwistStamped>()) {}
 
@@ -44,15 +64,6 @@ namespace omni_drive_controller
       auto_declare<double>("robot_radius", robot_params_.robot_radius);
       auto_declare<double>("wheel_radius", robot_params_.wheel_radius);
       auto_declare<double>("gamma", robot_params_.gamma);
-
-      // auto_declare<std::string>("odom_frame_id", odom_params_.odom_frame_id);
-      // auto_declare<std::string>("base_frame_id", odom_params_.base_frame_id);
-      // auto_declare<std::string>("odom_numeric_integration_method",
-      //   odom_params_.odom_numeric_integration_method);
-      // auto_declare<std::vector<double>>("pose_covariance_diagonal", std::vector<double>());
-      // auto_declare<std::vector<double>>("twist_covariance_diagonal", std::vector<double>());
-      // auto_declare<bool>("open_loop", odom_params_.open_loop);
-      // auto_declare<bool>("enable_odom_tf", odom_params_.enable_odom_tf);
 
       auto_declare<double>("cmd_vel_timeout", cmd_vel_timeout_.count() / 1000.0);
       auto_declare<int>("velocity_rolling_window_size", 10);
@@ -108,7 +119,6 @@ namespace omni_drive_controller
         static_cast<int>(node_->get_parameter("cmd_vel_timeout").as_double() * 1000.0)};
     use_stamped_vel_ = node_->get_parameter("use_stamped_vel").as_bool();
 
-    // initialize command subscriber
     if (use_stamped_vel_)
     {
       vel_cmd_subscriber_ = node_->create_subscription<geometry_msgs::msg::TwistStamped>(

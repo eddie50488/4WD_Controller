@@ -1,3 +1,25 @@
+// MIT License
+
+// Copyright (c) 2022 Mateus Menezes
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #ifndef OMNI_CONTROLLER_OMNIDIRECTIONAL_CONTROLLER_HPP_
 #define OMNI_CONTROLLER_OMNIDIRECTIONAL_CONTROLLER_HPP_
 
@@ -48,26 +70,9 @@ namespace omni_drive_controller
     // Default parameters for axebot
     RobotParams robot_params_{0.1, 0.0505, 0.0}; // {wheel_radius, base_radius, gamma}
 
-    // struct OdometryParams {
-    //   bool open_loop = false;
-    //   bool enable_odom_tf = true;
-    //   std::string base_frame_id = "base_link";
-    //   std::string odom_frame_id = "odom";
-    //   std::string odom_numeric_integration_method = EULER_FORWARD;
-    //   std::array<double, 6> pose_covariance_diagonal;
-    //   std::array<double, 6> twist_covariance_diagonal;
-    // } odom_params_;
-
     bool use_stamped_vel_ = true;
 
     Kinematics omni_robot_kinematics_;
-    // Odometry odometry_;
-
-    // rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odometry_publisher_ = nullptr;
-    // rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr odometry_transform_publisher_ = nullptr;
-
-    // tf2_msgs::msg::TFMessage odometry_transform_message_;
-    // nav_msgs::msg::Odometry odometry_message_;
 
     // Timeout to consider cmd_vel commands old
     std::chrono::milliseconds cmd_vel_timeout_{500};
