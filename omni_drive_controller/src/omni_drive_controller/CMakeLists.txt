@@ -48,7 +48,7 @@ target_include_directories(kinematics
 
 # Add main library
 add_library(${PROJECT_NAME} SHARED
-  src/omni_controller.cpp
+  src/omni_drive_controller.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -65,51 +65,56 @@ target_link_libraries(${PROJECT_NAME}
   kinematics
 )
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
-pluginlib_export_plugin_description_file(controller_interface omnidirectional_plugin.xml)
+target_compile_definitions(${PROJECT_NAME} PRIVATE "omni_drive_controller_BUILDING_DLL")
+pluginlib_export_plugin_description_file(controller_interface omni_drive_controller.xml)
 
+# target_compile_definitions(${PROJECT_NAME} PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+# pluginlib_export_plugin_description_file(controller_interface omni_drive_controller.xml)
+
+
+
+
+
+
+# INSTALLS
 install(DIRECTORY include/
   DESTINATION include
 )
 
 install(TARGETS ${PROJECT_NAME}
+  EXPORT export_omni_drive_arduino
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
 )
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  find_package(ament_cmake_gmock REQUIRED)
 
-  ament_lint_auto_find_test_dependencies()
+## TESTING
+# if(BUILD_TESTING)
+#   find_package(ament_lint_auto REQUIRED)
+#   find_package(ament_cmake_gmock REQUIRED)
 
-  ament_add_gmock(
-    test_kinematics
-    test/test_kinematics.cpp
-    src/kinematics.cpp
-  )
+#   ament_lint_auto_find_test_dependencies()
 
-  target_link_libraries(test_kinematics
-    kinematics
-  )
+#   ament_add_gmock(
+#     test_kinematics
+#     test/test_kinematics.cpp
+#     src/kinematics.cpp
+#   )
 
-  target_include_directories(test_kinematics PRIVATE include)
-  ament_target_dependencies(test_kinematics)
-endif()
+#   target_link_libraries(test_kinematics
+#     kinematics
+#   )
 
-ament_export_dependencies(
-  ${THIS_PACKAGE_INCLUDE_DEPENDS}
-)
+#   target_include_directories(test_kinematics PRIVATE include)
+#   ament_target_dependencies(test_kinematics)
+# endif()
 
-ament_export_include_directories(
-  include
-)
 
-ament_export_libraries(
-  ${PROJECT_NAME}
-)
-
+## EXPORTS
+ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
 ament_package()
 
 

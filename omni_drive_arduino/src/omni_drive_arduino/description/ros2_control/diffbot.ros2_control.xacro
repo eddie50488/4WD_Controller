@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="omnibot_ros2_control" params="name prefix">
+    <ros2_control name="${name}" type="system">
+      <hardware>
+        <plugin>omni_drive_arduino/OmniDriveArduinoHardware</plugin>
+        <param name="first_wheel_name">first_wheel_joint</param>
+        <param name="second_wheel_name">second_wheel_joint</param>
+        <param name="third_wheel_name">third_wheel_joint</param>
+        <param name="fourth_wheel_name">fourth_wheel_joint</param>
+        <param name="device">/dev/ttyACM0</param>
+        <param name="baud_rate">9600</param>
+        <param name="timeout_ms">1000</param>
+      </hardware>
+      <joint name="${prefix}first_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="${prefix}second_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="${prefix}third_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="${prefix}fourth_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+  </xacro:macro>
+</robot>

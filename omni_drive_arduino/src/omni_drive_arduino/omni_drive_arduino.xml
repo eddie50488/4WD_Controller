@@ -1,0 +1,9 @@
+<library path="omni_drive_arduino">
+  <class name="omni_drive_arduino/OmniDriveArduinoHardware"
+         type="omni_drive_arduino::OmniDriveArduinoHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+            Project robot ros2_control hardware interface.
+    </description>
+  </class>
+</library>

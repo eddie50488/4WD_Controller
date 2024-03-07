@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- Basic differential drive mobile base -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="custom_hardware">
+  <xacro:arg name="prefix" default="" />
+
+  <!-- Import urdf description -->
+  <xacro:include filename="$(find omni_drive_arduino)/urdf/diffbot_description.urdf.xacro" />
+
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find omni_drive_arduino)/urdf/diffbot.materials.xacro" />
+
+  <!-- Import diffbot ros2_control description -->
+  <xacro:include filename="$(find omni_drive_arduino)/ros2_control/diffbot.ros2_control.xacro" />
+
+  <xacro:omnibot prefix="$(arg prefix)" />
+
+  <xacro:omnibot_ros2_control
+    name="omnibot" prefix="$(arg prefix)" />
+
+</robot>

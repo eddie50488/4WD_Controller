@@ -1,26 +1,4 @@
-// MIT License
-
-// Copyright (c) 2022 Mateus Menezes
-
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-#include "omni_drive_controller/omni_controller.hpp"
+#include "omni_drive_controller/omni_drive_controller.hpp"
 
 #include <chrono> // NOLINT
 #include <cmath>
@@ -45,11 +23,12 @@ namespace omni_drive_controller
   using namespace std::chrono_literals;
   using controller_interface::interface_configuration_type;
   using controller_interface::InterfaceConfiguration;
-  // using hardware_interface::HW_IF_POSITION;
   using hardware_interface::HW_IF_VELOCITY;
   using lifecycle_msgs::msg::State;
   using std::placeholders::_1;
 
+  // initializes the cmd_vel_ member variable with a shared pointer to
+  // a new instance of geometry_msgs::msg::TwistStamped.
   OmniDriveController::OmniDriveController()
       : controller_interface::ControllerInterface(), cmd_vel_(std::make_shared<geometry_msgs::msg::TwistStamped>()) {}
 
@@ -61,12 +40,7 @@ namespace omni_drive_controller
     try
     {
       auto_declare<std::vector<std::string>>("wheel_names", std::vector<std::string>());
-      auto_declare<double>("robot_radius", robot_params_.robot_radius);
-      auto_declare<double>("wheel_radius", robot_params_.wheel_radius);
-      auto_declare<double>("gamma", robot_params_.gamma);
-
       auto_declare<double>("cmd_vel_timeout", cmd_vel_timeout_.count() / 1000.0);
-      auto_declare<int>("velocity_rolling_window_size", 10);
       auto_declare<bool>("use_stamped_vel", use_stamped_vel_);
     }
     catch (const std::exception &e)
@@ -108,17 +82,13 @@ namespace omni_drive_controller
 
     // update parameters
     wheel_names_ = node_->get_parameter("wheel_names").as_string_array();
-    robot_params_.robot_radius = node_->get_parameter("robot_radius").as_double();
-    robot_params_.wheel_radius = node_->get_parameter("wheel_radius").as_double();
-    robot_params_.gamma = node_->get_parameter("gamma").as_double();
-    robot_params_.gamma = DEG2RAD(robot_params_.gamma);
-
     omni_robot_kinematics_.setRobotParams(robot_params_);
 
     cmd_vel_timeout_ = std::chrono::milliseconds{
         static_cast<int>(node_->get_parameter("cmd_vel_timeout").as_double() * 1000.0)};
     use_stamped_vel_ = node_->get_parameter("use_stamped_vel").as_bool();
 
+    // initialize command subscriber
     if (use_stamped_vel_)
     {
       vel_cmd_subscriber_ = node_->create_subscription<geometry_msgs::msg::TwistStamped>(
@@ -185,9 +155,38 @@ namespace omni_drive_controller
     return CallbackReturn::SUCCESS;
   }
 
+  void OmniDriveController::velocityCommandStampedCallback(
+  const geometry_msgs::msg::TwistStamped::SharedPtr cmd_vel) {
+  if (!subscriber_is_active_) {
+    RCLCPP_WARN(node_->get_logger(), "Can't accept new commands. subscriber is inactive");
+    return;
+  }
+  if ((cmd_vel->header.stamp.sec == 0) && (cmd_vel->header.stamp.nanosec == 0)) {
+    RCLCPP_WARN_ONCE(
+      node_->get_logger(),
+      "Received TwistStamped with zero timestamp, setting it to current "
+      "time, this message will only be shown once");
+    cmd_vel->header.stamp = node_->get_clock()->now();
+  }
+
+  this->cmd_vel_ = std::move(cmd_vel);
+}
+
+  void OmniDriveController::velocityCommandUnstampedCallback(
+    const geometry_msgs::msg::Twist::SharedPtr cmd_vel) {
+    if (!subscriber_is_active_) {
+      RCLCPP_WARN(node_->get_logger(), "Can't accept new commands. subscriber is inactive");
+      return;
+    }
+
+    this->cmd_vel_->twist = *cmd_vel;
+    this->cmd_vel_->header.stamp = node_->get_clock()->now();
+  }
+
+
   controller_interface::return_type OmniDriveController::update(
       const rclcpp::Time &time,
-      const rclcpp::Duration &period)
+      const rclcpp::Duration & /*period*/)
   {
     auto logger = node_->get_logger();
     const auto current_time = time;
@@ -223,7 +222,9 @@ namespace omni_drive_controller
 
 } // namespace omni_drive_controller
 
-#include "class_loader/register_macro.hpp"
+// #include "pluginlib/class_list_macros.hpp"
+// PLUGINLIB_EXPORT_CLASS(omni_drive_controller::OmniDriveController, controller_interface::ControllerInterface)
 
-CLASS_LOADER_REGISTER_CLASS(
-    omni_drive_controller::OmniDriveController, controller_interface::ControllerInterface)
+
+#include "class_loader/register_macro.hpp"
+CLASS_LOADER_REGISTER_CLASS(omni_drive_controller::OmniDriveController, controller_interface::ControllerInterface)

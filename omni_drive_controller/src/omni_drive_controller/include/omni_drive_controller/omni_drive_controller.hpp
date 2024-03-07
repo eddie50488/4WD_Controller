@@ -1,25 +1,3 @@
-// MIT License
-
-// Copyright (c) 2022 Mateus Menezes
-
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
 #ifndef OMNI_CONTROLLER_OMNIDIRECTIONAL_CONTROLLER_HPP_
 #define OMNI_CONTROLLER_OMNIDIRECTIONAL_CONTROLLER_HPP_
 
@@ -51,9 +29,6 @@ namespace omni_drive_controller
     CallbackReturn on_configure(const rclcpp_lifecycle::State &previous_state) override;
     CallbackReturn on_activate(const rclcpp_lifecycle::State &previous_state) override;
     CallbackReturn on_deactivate(const rclcpp_lifecycle::State &previous_state) override;
-    CallbackReturn on_cleanup(const rclcpp_lifecycle::State &previous_state) override;
-    CallbackReturn on_error(const rclcpp_lifecycle::State &previous_state) override;
-    CallbackReturn on_shutdown(const rclcpp_lifecycle::State &previous_state) override;
     controller_interface::return_type update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
     ~OmniDriveController();
 
@@ -67,10 +42,9 @@ namespace omni_drive_controller
     std::vector<std::string> wheel_names_;
     std::vector<WheelHandle> registered_wheel_handles_;
 
-    // Default parameters for axebot
-    RobotParams robot_params_{0.1, 0.0505, 0.0}; // {wheel_radius, base_radius, gamma}
+    RobotParams robot_params_{0.0505};
 
-    bool use_stamped_vel_ = true;
+    bool use_stamped_vel_ = false;
 
     Kinematics omni_robot_kinematics_;
 
@@ -90,12 +64,9 @@ namespace omni_drive_controller
     void velocityCommandStampedCallback(const geometry_msgs::msg::TwistStamped::SharedPtr cmd_vel);
     void velocityCommandUnstampedCallback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel);
     geometry_msgs::msg::TwistStamped::SharedPtr cmd_vel_;
-    double cos_gamma{0};
-    double sin_gamma{0};
-
     std::shared_ptr<rclcpp_lifecycle::LifecycleNode> node_;
   };
 
 } // namespace omnidirectional_controllers
 
-#endif // OMNIDIRECTIONAL_CONTROLLERS__OMNIDIRECTIONAL_CONTROLLER_HPP_
+#endif // OMNI_CONTROLLER_OMNIDIRECTIONAL_CONTROLLER_HPP_

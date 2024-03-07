@@ -15,7 +15,7 @@ TEST_F(TestOmnidirectionalControllersKinematics, TestInverseKinematics)
 {
   std::vector<double> angular_velocities;
   omni_drive_controller::RobotVelocity vel;
-  kinematics_.setRobotParams({0.053112205, 0.1, DEG2RAD(30)});
+  kinematics_.setRobotParams({0.0505});
 
   vel = {1, 0, 0};
   angular_velocities = kinematics_.getWheelsAngularVelocities(vel);
