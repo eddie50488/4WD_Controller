@@ -1,2 +1,2 @@
 # 4WD_Controller
-A very simply controller for a 4WD Omni Wheeled Robot
+A controller for a 4WD Omni Wheeled Robot
