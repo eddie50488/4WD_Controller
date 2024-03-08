@@ -23,56 +23,56 @@ namespace omni_drive_controller
     double vx = vel.vx;
     double vy = vel.vy;
     double wl = vel.omega;
-    double on = 1;
-    double idle = 0;
+    double forward = 1.0;
+    double backward = 2.0;
+    double idle = 4.0;
 
-    // Logic to calculate wheel velocities based on kinematics
     if (vx > 0)
     {
-      angular_vel_vec_[0] = on;
-      angular_vel_vec_[1] = on;
+      angular_vel_vec_[0] = forward;
+      angular_vel_vec_[1] = idle;
       angular_vel_vec_[2] = idle;
-      angular_vel_vec_[3] = idle;
+      angular_vel_vec_[3] = backward;
     }
 
     if (vx < 0)
     {
-      angular_vel_vec_[0] = -on;
-      angular_vel_vec_[1] = -on;
+      angular_vel_vec_[0] = backward;
+      angular_vel_vec_[1] = idle;
       angular_vel_vec_[2] = idle;
-      angular_vel_vec_[3] = idle;
+      angular_vel_vec_[3] = forward;
     }
 
     if (vy > 0)
     {
       angular_vel_vec_[0] = idle;
-      angular_vel_vec_[1] = idle;
-      angular_vel_vec_[2] = on;
-      angular_vel_vec_[3] = on;
+      angular_vel_vec_[1] = forward;
+      angular_vel_vec_[2] = backward;
+      angular_vel_vec_[3] = idle;
     }
 
     if (vy < 0)
     {
       angular_vel_vec_[0] = idle;
-      angular_vel_vec_[1] = idle;
-      angular_vel_vec_[2] = -on;
-      angular_vel_vec_[3] = -on;
+      angular_vel_vec_[1] = backward;
+      angular_vel_vec_[2] = forward;
+      angular_vel_vec_[3] = idle;
     }
 
     if (wl > 0)
     {
-      angular_vel_vec_[0] = on;
-      angular_vel_vec_[1] = on;
-      angular_vel_vec_[2] = on;
-      angular_vel_vec_[3] = on;
+      angular_vel_vec_[0] = forward;
+      angular_vel_vec_[1] = forward;
+      angular_vel_vec_[2] = forward;
+      angular_vel_vec_[3] = forward;
     }
 
     if (wl < 0)
     {
-      angular_vel_vec_[0] = -on;
-      angular_vel_vec_[1] = -on;
-      angular_vel_vec_[2] = -on;
-      angular_vel_vec_[3] = -on;
+      angular_vel_vec_[0] = backward;
+      angular_vel_vec_[1] = backward;
+      angular_vel_vec_[2] = backward;
+      angular_vel_vec_[3] = backward;
     }
 
     return angular_vel_vec_;
@@ -87,7 +87,7 @@ namespace omni_drive_controller
   void Kinematics::initializeParams()
   {
     angular_vel_vec_.reserve(OMNI_ROBOT_WHEELS);
-    angular_vel_vec_ = {0, 0, 0, 0};
+    angular_vel_vec_ = {4, 4, 4, 4};
   }
 
   Kinematics::~Kinematics() {}

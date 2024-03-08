@@ -54,22 +54,24 @@ def generate_launch_description():
         executable="robot_state_publisher",
         output="both",
         parameters=[robot_description, log_level],
+        
     )
-
+    
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[robot_description, robot_controller, log_level],
         output="both",
     )
-  
-    rviz_node = Node(
-        package="rviz2",
-        executable="rviz2",
-        name="rviz2",
-        output="log",
-        arguments=["-d", rviz_config_file],
-    )
+    
+    # rviz_node = Node(
+    #     package="rviz2",
+    #     executable="rviz2",
+    #     name="rviz2",
+    #     output="log",
+    #     arguments=["-d", rviz_config_file],
+    # )
+
 
     robot_controller_spawner = Node(
         package="controller_manager",
@@ -83,7 +85,7 @@ def generate_launch_description():
         control_node,
         robot_state_pub_node,
         robot_controller_spawner,
-        rviz_node
+        # rviz_node
     ]
 
     return LaunchDescription(nodes)

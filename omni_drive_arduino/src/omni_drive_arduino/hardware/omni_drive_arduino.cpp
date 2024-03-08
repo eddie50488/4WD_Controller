@@ -114,6 +114,7 @@ namespace omni_drive_arduino // same as folder name
     RCLCPP_INFO(rclcpp::get_logger("OmniDriveArduinoHardware"), "Cleaning up ...please wait...");
     if (comms_.connected())
     {
+      std::cout << "Exiting" << std::endl;
       comms_.disconnect();
     }
     RCLCPP_INFO(rclcpp::get_logger("OmniDriveArduinoHardware"), "Successfully cleaned up!");
